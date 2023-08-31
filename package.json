@@ -1,0 +1,32 @@
+{
+  "name": "vue-mobile-template",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.5.0",
+    "vant": "^4.6.6",
+    "vue": "^3.3.4",
+    "vue-router": "^4.2.4"
+  },
+  "devDependencies": {
+    "@iconify/json": "^2.2.116",
+    "@unocss/reset": "^0.55.7",
+    "@unocss/transformer-attributify-jsx": "^0.55.7",
+    "@unocss/transformer-directives": "^0.55.7",
+    "@vitejs/plugin-vue": "^4.2.3",
+    "postcss-px-to-viewport-8-plugin": "^1.2.2",
+    "sass": "^1.66.1",
+    "typescript": "^5.0.2",
+    "unocss": "^0.55.7",
+    "unplugin-auto-import": "^0.16.6",
+    "unplugin-vue-components": "^0.25.2",
+    "vite": "^4.4.5",
+    "vue-tsc": "^1.8.5"
+  }
+}
