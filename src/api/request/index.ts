@@ -1,14 +1,20 @@
 import axios, { AxiosHeaders, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import type { AxiosInstance } from 'axios'
+import { Token } from '~/utils'
+import { AxiosResponseCode, AxiosResponseDataKeyEum } from '~/enum'
+import type { IResponseData } from '../interface'
 
 export class HTTP {
-
 	private readonly axiosInstance: AxiosInstance
 
-	constructor(baseURL: string) {
+	constructor(config: AxiosRequestConfig) {
+		const { baseURL, ...rest } = config
+
 		this.axiosInstance = axios.create({
-			baseURL,
-			timeout: 10000
+			baseURL: config.baseURL,
+			timeout: 1000 * 30,
+			withCredentials: true,
+			...rest
 		})
 
 		this.requestInterceptors()
@@ -16,40 +22,112 @@ export class HTTP {
 	}
 
 	public requestInterceptors() {
-		axios.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-			config.headers['Content-Type'] = 'application/json'
-			return config
-		})
+		this.axiosInstance.interceptors.request.use(
+			(config: InternalAxiosRequestConfig) => {
+				config.headers['Content-Type'] = 'application/json'
+				// 设置请求头
+				config.headers.Authorization = `Bearer ${Token.getToken()}`
+				return config
+			},
+			error => {
+				showToast({
+					type: 'fail',
+					message: error.message
+				})
+				return Promise.reject(error)
+			}
+		)
 	}
 
 	public responseInterceptors() {
-		axios.interceptors.response.use((response: AxiosResponse) => {
-			return response
+		this.axiosInstance.interceptors.response.use((response: AxiosResponse) => {
+			return new Promise((resolve, reject) => {
+				const { data, status } = response
+				if (status !== 200) {
+					showToast({
+						type: 'fail',
+						message: data.message
+					})
+					reject(data)
+				}
+
+				if (data[AxiosResponseDataKeyEum.code] !== AxiosResponseCode.success) {
+					showToast({
+						type: 'fail',
+						message: data.message
+					})
+
+					// TODO: 统一错误处理
+					// handleError
+					reject(data)
+				}
+
+				resolve(data)
+			})
 		})
 	}
-
 
 	public get instance() {
 		return this.axiosInstance
 	}
 
-	private get<T>(url: string, params: T, options?: AxiosHeaders) {
-		return this.axiosInstance.get(url, { params, ...options })
+	public request<T>(config: AxiosRequestConfig<T>): Promise<IResponseData<T>> {
+		return this.instance!.request(config)
 	}
 
-	private post<T>(url: string, data: T, options?: AxiosHeaders) {
-		return this.axiosInstance.post(url, data, {
-			...options
-		})
+	public get = <T>(
+		url: string,
+		params: any = {},
+		config: AxiosRequestConfig = {}
+	): Promise<IResponseData<T>> => {
+		const option: AxiosRequestConfig = {
+			url,
+			method: 'GET',
+			params,
+			...config
+		}
+		return this.request(option)
 	}
 
-	private put<T>(url: string, data: T, options?: AxiosHeaders) {
-		return this.axiosInstance.put(url, data, {
-			...options
-		})
+	public post = <T>(
+		url: string,
+		data: any = {},
+		config: AxiosRequestConfig = {}
+	): Promise<IResponseData<T>> => {
+		const option: AxiosRequestConfig = {
+			url,
+			method: 'POST',
+			data,
+			...config
+		}
+		return this.request(option)
 	}
 
-	private remove<T>(url: string, params: T, options?: AxiosHeaders) {
-		return this.axiosInstance.delete(url, { params, ...options })
+	public put = <T>(
+		url: string,
+		data: any = {},
+		config: AxiosRequestConfig = {}
+	): Promise<IResponseData<T>> => {
+		const option: AxiosRequestConfig = {
+			url,
+			method: 'PUT',
+			data,
+			...config
+		}
+		return this.request(option)
+	}
+
+	public remove = <T>(
+		url: string,
+		params: any = {},
+		config: AxiosRequestConfig = {}
+	): Promise<IResponseData<T>> => {
+		const option: AxiosRequestConfig = {
+			url,
+			method: 'DELETE',
+			params,
+			...config
+		}
+		return this.request(option)
 	}
 }

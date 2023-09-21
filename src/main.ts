@@ -1,13 +1,12 @@
 import { createApp } from 'vue'
-import 'uno.css'
-import '@unocss/reset/normalize.css'
-import './style.css'
-import App from './App.vue'
+import App from './App'
 import { setupRouter } from './router'
+import { setupStyle } from './styles'
 
 const bootstrap = async () => {
 	const app = createApp(App)
 	setupRouter(app)
+	setupStyle()
 	app.mount('#app')
 }
 

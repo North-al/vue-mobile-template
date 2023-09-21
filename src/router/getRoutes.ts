@@ -1,12 +1,10 @@
-import { RouteLocationRaw } from 'vue-router'
+import { RouteRecordRaw } from 'vue-router'
 
-
-const routerArr: RouteLocationRaw[] = []
+const routerArr: RouteRecordRaw[] = []
 const importAllPage = () => {
-	const modules = import.meta.glob('../pages/**/*.vue', { eager: true })
-	console.log({modules})
+	const modules = import.meta.glob('../pages/**/*.tsx', { eager: true })
 	for (const filePath in modules) {
-		const path = filePath.match(/\.\/pages(.*)\.vue$/)?.[1] || ''
+		const path = filePath.match(/\.\/pages(.*)\.tsx$/)?.[1] || ''
 
 		// 将path转换为name
 		const nameArr = path.split('/').filter(Boolean)
@@ -16,7 +14,8 @@ const importAllPage = () => {
 			name += nameItem.replace(/^\S/, s => s.toUpperCase())
 		}
 
-		const component = modules[filePath]
+		const component = modules[filePath] as { default: any }
+
 		routerArr.push({
 			path,
 			name,
@@ -27,13 +26,11 @@ const importAllPage = () => {
 
 importAllPage()
 
-
-
-export const routes: RouteLocationRaw = [
+export const routes: RouteRecordRaw[] = [
 	{
 		path: '/',
 		name: 'Home',
-		component: () => import('../pages/home/index.vue')
+		component: () => import('../pages/home/index')
 	},
 	...routerArr
 ]

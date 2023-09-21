@@ -12,20 +12,26 @@ export const autoImport = () => {
 			// presets
 			'vue',
 			'vue-router',
-			{},
-			// example type import
+			{
+				'~/hooks': ['usePage'],
+				vue: ['KeepAlive']
+			},
 			{
 				from: 'vue-router',
 				imports: ['RouteLocationRaw'],
 				type: true
+			},
+			{
+				from: 'vant',
+				imports: ['showToast']
 			}
 		],
-		dts: './auto-imports.d.ts',
+		dts: './src/interface/auto-imports.d.ts',
 		resolvers: [VantResolver()],
 		eslintrc: {
 			enabled: true, // Default `false`
 			filepath: './.eslintrc-auto-import.json', // Default `./.eslintrc-auto-import.json`
-			globalsPropValue: true, // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
-		},
+			globalsPropValue: true // Default `true`, (true | false | 'readonly' | 'readable' | 'writable' | 'writeable')
+		}
 	})
 }

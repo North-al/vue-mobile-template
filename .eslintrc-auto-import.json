@@ -49,6 +49,7 @@
     "shallowReactive": true,
     "shallowReadonly": true,
     "shallowRef": true,
+    "showToast": true,
     "toRaw": true,
     "toRef": true,
     "toRefs": true,
@@ -59,12 +60,14 @@
     "useCssModule": true,
     "useCssVars": true,
     "useLink": true,
+    "usePage": true,
     "useRoute": true,
     "useRouter": true,
     "useSlots": true,
     "watch": true,
     "watchEffect": true,
     "watchPostEffect": true,
-    "watchSyncEffect": true
+    "watchSyncEffect": true,
+    "KeepAlive": true
   }
 }
